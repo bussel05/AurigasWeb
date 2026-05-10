@@ -1,0 +1,132 @@
+---
+const CHANNEL_URL = "https://www.youtube.com/@AurigasArchive";
+const RSS_FEED = "https://www.youtube.com/feeds/videos.xml?channel_id=UC1B0iXsRUVHFit6dvwnBDlw";
+const YOUTUBE_ICON_PATH = "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z";
+
+let videos: { id: string; title: string; thumbnail: string; url: string }[] = [];
+
+try {
+  const res = await fetch(RSS_FEED);
+  const xml = await res.text();
+
+  const entries = [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)];
+  videos = entries.map((entry) => {
+    const content = entry[1];
+    const id = (content.match(/<yt:videoId>(.*?)<\/yt:videoId>/) || [])[1] || "";
+    const title = (content.match(/<title>(.*?)<\/title>/) || [])[1] || "";
+    const thumbnail = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+    const url = `https://www.youtube.com/watch?v=${id}`;
+    return { id, title: title.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&#39;/g, "'").replace(/&quot;/g, '"'), thumbnail, url };
+  });
+} catch (e) {
+  console.error("Failed to fetch YouTube RSS feed", e);
+}
+---
+
+<section class="yt-section container mx-auto px-8 md:px-20 pt-8 pb-20">
+  <header class="mb-12 text-center">
+    <a
+      href={CHANNEL_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="yt-channel-link inline-flex items-center gap-3 group"
+    >
+    <span class="yt-icon">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="36" height="36">
+        <path d={YOUTUBE_ICON_PATH}/>
+    </svg>
+    </span>
+      <h2 class="text-4xl md:text-5xl font-bold text-white drop-shadow-lg group-hover:text-red-400 transition-colors duration-300">
+        Aurigas Archive
+      </h2>
+      <span class="yt-ext-icon text-white/40 group-hover:text-red-400 transition-colors duration-300">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <polyline points="15 3 21 3 21 9"/>
+          <line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+      </span>
+    </a>
+    <p class="text-base md:text-lg text-white/60 mt-3">
+      Últimos vídeos del archive de Aurigas
+    </p>
+  </header>
+
+  {videos.length === 0 ? (
+    <div class="text-center text-white/40 py-20">
+      <svg class="mx-auto mb-4 opacity-30" viewBox="0 0 24 24" fill="currentColor" width="64" height="64">
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+      </svg>
+      <p>No se pudieron cargar los vídeos.</p>
+    </div>
+  ) : (
+    <div class="videos-grid">
+      {videos.map((video) => (
+        <a
+          href={video.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="video-card bg-[#0a1224] rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300 group"
+        >
+            <div class="relative overflow-hidden aspect-video bg-[#121a2e]">
+            <img
+                src={video.thumbnail}
+                alt={video.title}
+                width="480"
+                height="360"
+                class="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300"
+                loading="lazy"
+                decoding="async"
+            />
+          </div>
+          <div class="p-3">
+            <h3 class="text-xs font-semibold text-white leading-snug line-clamp-2 group-hover:text-red-400 transition-colors duration-200">
+              {video.title}
+            </h3>
+          </div>
+        </a>
+      ))}
+    </div>
+  )}
+</section>
+
+<style>
+  .yt-section {
+    font-family: inherit;
+  }
+
+  .yt-channel-link {
+    text-decoration: none;
+  }
+
+  .yt-icon {
+    color: #ff0000;
+    filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.4));
+  }
+
+  /* 15 vídeos: 5 columnas × 3 filas */
+  .videos-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+  }
+
+  @media (max-width: 1024px) {
+    .videos-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .videos-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

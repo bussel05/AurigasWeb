@@ -1,10 +1,11 @@
 import type { APIRoute } from "astro";
+export const prerender = false;
 
 const RSS_FEED = "https://www.youtube.com/feeds/videos.xml?channel_id=UC1B0iXsRUVHFit6dvwnBDlw";
 
 export const GET: APIRoute = async () => {
   try {
-    const res = await fetch(RSS_FEED);
+    const res = await fetch(RSS_FEED, { cache: "no-store", });
     const xml = await res.text();
     const entries = [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)];
 
@@ -29,6 +30,7 @@ export const GET: APIRoute = async () => {
     return new Response(JSON.stringify(videos), {
       headers: {
         "Content-Type": "application/json",
+        "Cache-Control": "no-store",
       },
     });
   } catch (err) {

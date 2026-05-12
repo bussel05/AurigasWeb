@@ -1,6 +1,9 @@
 ---
 const CHANNEL_VIDEOS_URL = "https://www.youtube.com/@AurigasArchive/videos";
 
+const RSS_FEED =
+  "https://www.youtube.com/feeds/videos.xml?channel_id=UC1B0iXsRUVHFit6dvwnBDlw";
+
 const YOUTUBE_ICON_PATH =
   "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z";
 ---
@@ -26,10 +29,7 @@ const YOUTUBE_ICON_PATH =
     </p>
   </header>
 
-  <div
-    id="videos-container"
-    class="videos-grid"
-  >
+  <div id="videos-container" class="videos-grid">
     <div class="text-center text-white/40 py-20 col-span-full">
       <svg
         class="mx-auto mb-4 opacity-30"
@@ -57,14 +57,43 @@ const YOUTUBE_ICON_PATH =
   </div>
 </section>
 
-<script>
+<script define:vars={{ RSS_FEED }}>
   async function loadVideos() {
     const container = document.getElementById("videos-container");
-    if (!container) return
-    
+
+    if (!container) return;
+
     try {
-      const res = await fetch("/api/streamsRequest");
-      const videos = await res.json();
+      const res = await fetch(RSS_FEED, {
+        cache: "no-store",
+      });
+      const xml = await res.text();
+
+      const entries = [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)];
+
+      const videos = entries.map((entry) => {
+        const content = entry[1];
+
+        const id =
+          (content.match(/<yt:videoId>(.*?)<\/yt:videoId>/) || [])[1] || "";
+
+        const title =
+          (content.match(/<title>(.*?)<\/title>/) || [])[1] || "";
+
+        return {
+          id,
+
+          title: title
+            .replace(/&amp;/g, "&")
+            .replace(/&lt;/g, "<")
+            .replace(/&gt;/g, ">")
+            .replace(/&#39;/g, "'")
+            .replace(/&quot;/g, '"'),
+
+          thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+          url: `https://www.youtube.com/watch?v=${id}`,
+        };
+      });
 
       if (!videos.length) {
         container.innerHTML = `
@@ -72,35 +101,37 @@ const YOUTUBE_ICON_PATH =
             <p>No se pudieron cargar los streams.</p>
           </div>
         `;
+
         return;
       }
 
       container.innerHTML = videos
+        .slice(0, 10)
         .map(
-          (video: { url: any; thumbnail: any; title: any; }) => `
-          <a
-            href="${video.url}"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="video-card bg-[#0a1224] rounded-md overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300 group"
-          >
-            <div class="relative overflow-hidden aspect-video bg-[#121a2e]">
-              <img
-                src="${video.thumbnail}"
-                alt="${video.title}"
-                class="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
+          (video) => `
+            <a
+              href="${video.url}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="video-card bg-[#0a1224] rounded-md overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300 group"
+            >
+              <div class="relative overflow-hidden aspect-video bg-[#121a2e]">
+                <img
+                  src="${video.thumbnail}"
+                  alt="${video.title}"
+                  class="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
 
-            <div class="p-3">
-              <h3 class="text-xs font-semibold text-white leading-snug line-clamp-2 group-hover:text-blue-500 transition-colors duration-200">
-                ${video.title}
-              </h3>
-            </div>
-          </a>
-        `
+              <div class="p-3">
+                <h3 class="text-xs font-semibold text-white leading-snug line-clamp-2 group-hover:text-blue-500 transition-colors duration-200">
+                  ${video.title}
+                </h3>
+              </div>
+            </a>
+          `
         )
         .join("");
     } catch (e) {

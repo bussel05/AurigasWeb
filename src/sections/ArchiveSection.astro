@@ -12,7 +12,7 @@ const YOUTUBE_ICON_PATH =
   <header class="mb-10 text-center flex flex-col items-center">
     <div class="flex flex-row items-center">
       <h2
-        class="text-2xl md:text-4xl lg:text-5xl font-bold text-white drop-shadow-lg group-hover:text-red-400 transition-colors duration-300"
+        class="text-2xl md:text-4xl lg:text-5xl font-bold text-white drop-shadow-lg"
       >
         Streams Archive
       </h2>
@@ -64,38 +64,18 @@ const YOUTUBE_ICON_PATH =
     if (!container) return;
 
     try {
-      const res = await fetch(RSS_FEED, {
-        cache: "no-store",
-      });
-      const xml = await res.text();
+      const res = await fetch(
+        `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(
+          RSS_FEED
+        )}`,
+        {
+          cache: "no-store",
+        }
+      );
 
-      const entries = [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)];
+      const data = await res.json();
 
-      const videos = entries.map((entry) => {
-        const content = entry[1];
-
-        const id =
-          (content.match(/<yt:videoId>(.*?)<\/yt:videoId>/) || [])[1] || "";
-
-        const title =
-          (content.match(/<title>(.*?)<\/title>/) || [])[1] || "";
-
-        return {
-          id,
-
-          title: title
-            .replace(/&amp;/g, "&")
-            .replace(/&lt;/g, "<")
-            .replace(/&gt;/g, ">")
-            .replace(/&#39;/g, "'")
-            .replace(/&quot;/g, '"'),
-
-          thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
-          url: `https://www.youtube.com/watch?v=${id}`,
-        };
-      });
-
-      if (!videos.length) {
+      if (!data.items?.length) {
         container.innerHTML = `
           <div class="text-center text-white/40 py-20 col-span-full">
             <p>No se pudieron cargar los streams.</p>
@@ -104,6 +84,17 @@ const YOUTUBE_ICON_PATH =
 
         return;
       }
+
+      const videos = data.items.map((video) => {
+        const videoId = video.link.split("v=")[1];
+
+        return {
+          id: videoId,
+          title: video.title,
+          thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+          url: video.link,
+        };
+      });
 
       container.innerHTML = videos
         .slice(0, 10)

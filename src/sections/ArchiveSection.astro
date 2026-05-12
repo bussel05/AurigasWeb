@@ -62,35 +62,46 @@ const YOUTUBE_ICON_PATH = "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.
     if (!container) return;
 
     try {
-      const res = await fetch(
-        `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(
-          RSS_FEED
-        )}`,
-        {
-          cache: "no-store",
-        }
-      );
+      const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(
+        RSS_FEED
+      )}`;
 
-      const data = await res.json();
+      const res = await fetch(proxy, {
+        cache: "no-store",
+      });
 
-      if (!data.items?.length) {
+      const xmlText = await res.text();
+
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(xmlText, "text/xml");
+
+      const entries = [...xml.querySelectorAll("entry")];
+
+      if (!entries.length) {
         container.innerHTML = `
           <div class="text-center text-white/40 py-20 col-span-full">
             <p>No se pudieron cargar los streams.</p>
           </div>
         `;
-
         return;
       }
 
-      const videos = data.items.map((video) => {
-        const videoId = video.link.split("v=")[1];
+      const videos = entries.map((entry) => {
+        const videoId =
+          entry.querySelector("video\\:videoId")?.textContent ||
+          entry.querySelector("videoId")?.textContent;
+
+        const title =
+          entry.querySelector("title")?.textContent || "Video";
+
+        const link =
+          entry.querySelector("link")?.getAttribute("href");
 
         return {
           id: videoId,
-          title: video.title,
+          title,
+          url: link,
           thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
-          url: video.link,
         };
       });
 
@@ -102,7 +113,7 @@ const YOUTUBE_ICON_PATH = "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.
               href="${video.url}"
               target="_blank"
               rel="noopener noreferrer"
-              class="video-card bg-[#0a1224] rounded-md overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300 group"
+              class="video-card bg-[#0a1224] rounded-md overflow-hidden shadow-lg hover:scale-[1.03] transition-transform duration-300 group"
             >
               <div class="relative overflow-hidden aspect-video bg-[#121a2e]">
                 <img

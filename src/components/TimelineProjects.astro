@@ -1,7 +1,6 @@
 <div class="tl-outer max-w-6xl mx-auto">
   <div class="tl-strip" id="tl-strip">
     <div class="tl-track" id="tl-track"></div>
-    <div class="tl-hline"></div>
     <div class="tl-fade tl-fade--l"></div>
     <div class="tl-fade tl-fade--r"></div>
     <button class="tl-arr tl-arr--l" id="tl-prev" aria-label="Anterior" disabled>&#8249;</button>
@@ -22,6 +21,18 @@
     overflow: hidden;
     isolation: isolate;
   }
+  .tl-strip::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 60px;
+    height: 1px;
+    background: rgba(255,255,255,.12);
+    z-index: 1;
+    pointer-events: none;
+    transform: translateZ(0);
+  }
   .tl-track {
     position: absolute;
     top: 0;
@@ -31,15 +42,6 @@
     will-change: transform;
     transform: translate3d(0,0,0);
     contain: layout style;
-  }
-  .tl-hline {
-    position: absolute;
-    left: 0; right: 0;
-    top: 60px;
-    height: 1px;
-    background: rgba(255,255,255,.12);
-    z-index: 1;
-    pointer-events: none;
   }
   :global(.tl-year-vline) {
     position: absolute;

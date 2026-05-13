@@ -1,92 +1,95 @@
-<section class="pt-8 pb-10 container mx-auto px-4">
-  <header class="mb-6 text-center flex flex-col items-center">
-    <div class="flex flex-row items-center gap-2">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white drop-shadow-lg">
-        PROYECTOS STA
-      </h2>
-      <img
-        src="/images/emotes/auri-vanilla.webp"
-        alt="YouTube Icon"
-        class="w-10 h-10 sm:w-12 sm:h-12 md:w-15 md:h-15 object-contain"
-      />
-    </div>
-    <p class="text-sm sm:text-base md:text-lg text-white/60 mt-2">
-      Mira todos los proyectos realizados en sta
-    </p>
-  </header>
-
-  <main class="space-y-10">
-    <section>
-      <h3 class="text-xl sm:text-2xl md:text-5xl font-bold text-white pb-4">
-        BLACKBONE
-      </h3>
-
-      <div class="flex flex-col md:flex-row gap-6 md:gap-10 items-start">
-        <img
-          src="https://media.discordapp.net/attachments/1076529653889630341/1362570807317893273/2025-04-18_01.15.34.png?ex=6a0460b3&is=6a030f33&hm=d9a16757327f3ffb9075aa9b39344ad7bdc280ec62b8f1f6d128d2eb96d45209&=&format=webp&quality=lossless&width=1444&height=812"
-          alt="black-bone"
-          class="rounded-lg w-full md:w-[460px] h-auto object-cover"
-        />
-
-        <div class="flex flex-col w-full">
-          <p class="w-full max-w-3xl text-white/80 text-sm sm:text-base leading-relaxed">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-            when an unknown printer took a galley of type and scrambled it to make a type
-            specimen book. It has survived not only five centuries, but also the leap into
-            electronic typesetting.
-          </p>
-
-          <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 pt-4 text-white/90">
-            <span class="flex flex-row items-center font-normal text-sm sm:text-lg">
-              <h4 class="font-bold pr-2">Duracion:</h4>
-              5 meses
-            </span>
-            <span class="flex flex-row items-center font-normal text-sm sm:text-lg">
-              <h4 class="font-bold pr-2">Versión:</h4>
-              1.17
-            </span>
-          </div>
-
-          <div class="flex flex-col sm:flex-row gap-3 pt-5">
-            <a
-              href=""
-              target="_blank"
-              class="w-full sm:w-auto justify-center px-4 py-2 rounded-md hover:bg-red-700/80 border cursor-pointer border-white/10 text-white/90 hover:text-white text-sm font-medium backdrop-blur-sm transition-all duration-300 flex items-center gap-2"
-            >
-              <i class="fa-brands fa-youtube text-white text-2xl"></i>
-              VER EPISODIO
-            </a>
-
-            <a
-              href=""
-              target="_blank"
-              class="w-full sm:w-auto justify-center px-4 py-2 rounded-md hover:bg-blue-700/80 border cursor-pointer border-white/10 text-white/90 hover:text-white text-sm font-medium backdrop-blur-sm transition-all duration-300 flex items-center gap-2"
-            >
-              <i class="fa-solid fa-box-archive text-white text-2xl"></i>
-              ARCHIVE
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-8 sm:w-70%">
-        <img
-          src="https://media.discordapp.net/attachments/672919589859885058/1503850487181606974/image.png?ex=6a04d968&is=6a0387e8&hm=28cbeed6806f193422cf0fae1023f2b6d02b893907b2f67e729ce3bd49c2d780&=&format=webp&quality=lossless&width=1443&height=812"
-          alt="blackebone-1"
-          class="rounded-lg w-full h-45 object-cover"
-        />
-        <img
-          src="https://media.discordapp.net/attachments/672919589859885058/1503850535714029688/image.png?ex=6a04d973&is=6a0387f3&hm=71e63b7f83803229da9c2f9ccc580b3d957b52a65d9d100463c353918497c6f1&=&format=webp&quality=lossless&width=1443&height=812"
-          alt="blackebone-2"
-          class="rounded-lg w-full h-45 object-cover"
-        />
-        <img
-          src="https://media.discordapp.net/attachments/672919589859885058/1503850587727466506/image.png?ex=6a04d980&is=6a038800&hm=b32983aecb3a60b3959d11fcc6d02140487b61beddb882d32803689fb36bdf30&=&format=webp&quality=lossless&width=1443&height=812"
-          alt="blackebone-3"
-          class="rounded-lg w-full h-45 object-cover"
-        />
-      </div>
-    </section>
-  </main>
+<section class="pt-8 pb-10 container mx-auto px-4" id="project-detail">
+  <p class="text-white/50 text-center">Cargando proyecto...</p>
 </section>
+
+<script>
+  import { projects } from '../data/projects.ts';
+
+  const el = document.getElementById('project-detail');
+
+  function renderDetail(slug) {
+    const project = projects.find(p => p.slug === slug) ?? projects[0];
+
+    const galleryHTML = project.gallery?.length
+      ? `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-8">
+          ${project.gallery.map(src => `
+            <img src="${src}" class="rounded-lg w-full h-45 object-cover" />
+          `).join('')}
+        </div>`
+      : '';
+
+    const youtubeBtn = project.youtubeUrl
+      ? `<a href="${project.youtubeUrl}" target="_blank" rel="noopener noreferrer" 
+            class="w-full sm:w-auto justify-center px-4 py-2 rounded-md hover:bg-red-700/80 border cursor-pointer border-white/10 text-white/90 hover:text-white text-sm font-medium backdrop-blur-sm transition-all duration-300 flex items-center gap-2">
+            <i class="fa-brands fa-youtube text-white text-2xl"></i>
+            VER EPISODIO
+          </a>`
+      : '';
+
+    const archiveBtn = project.archiveUrl
+      ? `<a href="${project.archiveUrl}" target="_blank" rel="noopener noreferrer" 
+            class="w-full sm:w-auto justify-center px-4 py-2 rounded-md hover:bg-blue-700/80 border cursor-pointer border-white/10 text-white/90 hover:text-white text-sm font-medium backdrop-blur-sm transition-all duration-300 flex items-center gap-2">
+            <i class="fa-solid fa-box-archive text-white text-2xl"></i>
+            ARCHIVE
+          </a>`
+      : '';
+
+    const endText = project.end ?? 'En curso';
+
+    const durationHTML = project.duration
+      ? `<span class="flex flex-row items-center font-normal text-sm sm:text-lg">
+           <h4 class="font-bold pr-2">Duración:</h4>${project.duration}
+         </span>`
+      : '';
+
+    el.innerHTML = `
+      <header class="mb-6 text-center flex flex-col items-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white drop-shadow-lg">
+          ${project.name.toUpperCase()}
+        </h2>
+        <p class="text-sm sm:text-base md:text-lg text-white/60 mt-2">
+          ${project.start} → ${endText}
+        </p>
+      </header>
+
+      <main class="space-y-10">
+        <section>
+          <div class="flex flex-col md:flex-row gap-6 md:gap-10 items-start">
+            <img
+              src="${project.mainImage}"
+              alt="${project.name}"
+              class="rounded-lg w-full md:w-[460px] h-auto object-cover"
+            />
+            <div class="flex flex-col w-full">
+              <p class="w-full max-w-3xl text-white/80 text-sm sm:text-base leading-relaxed">
+                ${project.description}
+              </p>
+              <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 pt-4 text-white/90">
+                ${durationHTML}
+                <span class="flex flex-row items-center font-normal text-sm sm:text-lg">
+                  <h4 class="font-bold pr-2">Versión:</h4>${project.version}
+                </span>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-3 pt-5">
+                ${youtubeBtn}
+                ${archiveBtn}
+              </div>
+            </div>
+          </div>
+          ${galleryHTML}
+        </section>
+      </main>
+    `;
+  }
+
+  renderDetail(new URLSearchParams(window.location.search).get('project'));
+
+  window.addEventListener('project-change', (e) => {
+    renderDetail(e.detail.slug);
+  });
+
+  window.addEventListener('popstate', (e) => {
+    const slug = e.state?.project ?? new URLSearchParams(window.location.search).get('project');
+    renderDetail(slug);
+  });
+</script>

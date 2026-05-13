@@ -2,28 +2,11 @@
   <div class="tl-strip" id="tl-strip">
     <div class="tl-track" id="tl-track"></div>
     <div class="tl-hline"></div>
-
     <div class="tl-fade tl-fade--l"></div>
     <div class="tl-fade tl-fade--r"></div>
-
-    <button
-      class="tl-arr tl-arr--l"
-      id="tl-prev"
-      aria-label="Anterior"
-      disabled
-    >
-      &#8249;
-    </button>
-
-    <button
-      class="tl-arr tl-arr--r"
-      id="tl-next"
-      aria-label="Siguiente"
-    >
-      &#8250;
-    </button>
+    <button class="tl-arr tl-arr--l" id="tl-prev" aria-label="Anterior" disabled>&#8249;</button>
+    <button class="tl-arr tl-arr--r" id="tl-next" aria-label="Siguiente">&#8250;</button>
   </div>
-
   <div class="tl-info" id="tl-info"></div>
 </div>
 
@@ -33,508 +16,263 @@
     overflow: hidden;
     font-family: system-ui, sans-serif;
   }
-
   .tl-strip {
     position: relative;
     height: 120px;
     overflow: hidden;
     isolation: isolate;
   }
-
   .tl-track {
     position: absolute;
     top: 0;
     height: 120px;
     width: 2600px;
-
     transition: transform .4s cubic-bezier(.4,0,.2,1);
-
     will-change: transform;
     transform: translate3d(0,0,0);
-
     contain: layout style;
   }
-
   .tl-hline {
     position: absolute;
-    left: 0;
-    right: 0;
+    left: 0; right: 0;
     top: 60px;
     height: 1px;
-
     background: rgba(255,255,255,.12);
-
     z-index: 1;
-
     pointer-events: none;
   }
-
   :global(.tl-year-vline) {
     position: absolute;
-    top: 0;
-    bottom: 0;
+    top: 0; bottom: 0;
     width: 1px;
-
     background: rgba(255,255,255,.06);
-
     z-index: 3;
-
     pointer-events: none;
-
     transform: translateZ(0);
-
     backface-visibility: hidden;
-
     will-change: transform;
   }
-
   :global(.tl-year-label) {
     position: absolute;
-
     top: 7px;
-
     margin-left: 10px;
-
     font-size: 12px;
-
     letter-spacing: 2px;
-
     color: rgba(255,255,255,.45);
-
     z-index: 4;
-
     white-space: nowrap;
-
     text-align: left;
-
     pointer-events: none;
-
     transform: translateZ(0);
-
     backface-visibility: hidden;
-
     will-change: transform;
   }
-
   :global(.tl-tick) {
     position: absolute;
-
     width: 2px;
-
     transform: translateX(-50%) translateZ(0);
-
     background: rgba(255,255,255,.22);
-
     border-radius: 999px;
-
-    transition:
-      height .25s ease,
-      top .25s ease,
-      background .25s ease,
-      width .25s ease;
-
+    transition: height .25s ease, top .25s ease, background .25s ease, width .25s ease;
     z-index: 5;
-
     backface-visibility: hidden;
-
     will-change: height, top, transform;
   }
-
   :global(.tl-tick.is-active) {
     background: rgba(255,255,255,.98);
     width: 2px;
   }
-
   :global(.tl-era-label) {
     position: absolute;
-
     font-size: 11px;
-
     letter-spacing: 1.5px;
-
     text-transform: uppercase;
-
     color: rgba(255,255,255,.24);
-
     white-space: nowrap;
-
-    transition:
-      color .25s ease,
-      letter-spacing .25s ease,
-      font-size .25s ease;
-
+    transition: color .25s ease, letter-spacing .25s ease, font-size .25s ease;
     cursor: pointer;
-
     user-select: none;
-
     z-index: 7;
-
     transform: translateZ(0);
-
     backface-visibility: hidden;
   }
-
-  :global(.tl-era-label:hover) {
-    color: rgba(255,255,255,.55);
-  }
-
+  :global(.tl-era-label:hover) { color: rgba(255,255,255,.55); }
   :global(.tl-era-label.is-active) {
     color: #fff;
     letter-spacing: 2px;
     font-size: 12px;
   }
-
-  :global(.tl-era-label.is-above) {
-    top: 20px;
-  }
-
-  :global(.tl-era-label.is-below) {
-    top: 76px;
-  }
-
+  :global(.tl-era-label.is-above) { top: 20px; }
+  :global(.tl-era-label.is-below) { top: 76px; }
   .tl-arr {
     position: absolute;
-
     top: 50%;
-
     transform: translateY(-50%);
-
     border: none;
-
     background: transparent;
-
     color: rgba(255,255,255,.3);
-
     font-size: 30px;
-
     cursor: pointer;
-
     z-index: 10;
-
     padding: 10px 18px;
-
     transition: color .2s ease;
   }
-
-  .tl-arr:hover {
-    color: white;
-  }
-
-  .tl-arr:disabled {
-    opacity: .08;
-    cursor: default;
-  }
-
-  .tl-arr--l {
-    left: 0;
-  }
-
-  .tl-arr--r {
-    right: 0;
-  }
-
+  .tl-arr:hover { color: white; }
+  .tl-arr:disabled { opacity: .08; cursor: default; }
+  .tl-arr--l { left: 0; }
+  .tl-arr--r { right: 0; }
   .tl-fade {
     position: absolute;
-
-    top: 0;
-    bottom: 0;
-
+    top: 0; bottom: 0;
     width: 120px;
-
     pointer-events: none;
-
     z-index: 9;
   }
-
-  .tl-fade--l {
-    left: 0;
-    background: linear-gradient(90deg,#0b1020 20%,transparent);
-  }
-
-  .tl-fade--r {
-    right: 0;
-    background: linear-gradient(270deg,#0b1020 20%,transparent);
-  }
-
+  .tl-fade--l { left: 0; background: linear-gradient(90deg,#0b1020 20%,transparent); }
+  .tl-fade--r { right: 0; background: linear-gradient(270deg,#0b1020 20%,transparent); }
   .tl-info {
     min-height: 64px;
-
     padding: 14px 24px;
-
     border-top: 1px solid rgba(255,255,255,.06);
-
     display: flex;
     justify-content: flex-end;
     align-items: center;
   }
-
   :global(.tl-info-dates) {
     color: rgba(255,255,255,.42);
     font-size: 16px;
   }
-
   :global(.tl-pulse) {
     display: inline-block;
-
-    width: 6px;
-    height: 6px;
-
+    width: 6px; height: 6px;
     border-radius: 999px;
-
     background: #4ade80;
-
     margin-right: 5px;
-
     animation: pulse 1.4s infinite;
-
     vertical-align: middle;
   }
-
   @keyframes pulse {
-    0%,100% {
-      opacity: 1;
-    }
-
-    50% {
-      opacity: .3;
-    }
+    0%,100% { opacity: 1; }
+    50% { opacity: .3; }
   }
 </style>
 
 <script>
+  import { eras } from '../data/projects.ts';
+
   const PPM = 30;
   const TRACK_PADDING = 180;
   const LINE_Y = 60;
 
-  const standaloneYears = [
-    { y: '2021', m: 6 },
-  ];
+  const standaloneYears = [{ y: '2021', m: 6 }];
 
-  const eras = [
-    {
-      name: 'Early-game',
-      m: 0,
-      year: '2020',
-      start: 'Jul 2020',
-      end: 'Nov 2020',
-      above: true,
-    },
-    {
-      name: 'Iron Farm',
-      m: 5,
-      start: 'Dic 2020',
-      end: 'Mar 2021',
-      above: false,
-    },
-    {
-      name: 'Andromeda',
-      m: 9,
-      start: 'Abr 2021',
-      end: 'May 2021',
-      above: true,
-    },
-    {
-      name: 'Raid Farm',
-      m: 11,
-      start: 'Jun 2021',
-      end: 'Jul 2021',
-      above: false,
-    },
-    {
-      name: 'Blackbone',
-      m: 13,
-      start: 'Ago 2021',
-      end: 'Dic 2021',
-      above: true,
-    },
-    {
-      name: 'Slimesweeper',
-      m: 18,
-      year: '2022',
-      start: 'Ene 2022',
-      end: 'May 2022',
-      above: false,
-    },
-    {
-      name: 'Dendrite',
-      m: 23,
-      start: 'Jun 2022',
-      end: 'Sep 2022',
-      above: true,
-    },
-    {
-      name: 'Androven',
-      m: 29,
-      start: 'Dic 2022',
-      end: 'Ene 2023',
-      above: false,
-    },
-    {
-      name: 'Ikaros',
-      m: 31,
-      year: '2023',
-      start: 'Feb 2023',
-      end: 'Oct 2023',
-      above: true,
-    },
-    {
-      name: 'Overspeed',
-      m: 40,
-      start: 'Nov 2023',
-      end: 'Ene 2024',
-      above: false,
-    },
-    {
-      name: 'Yukon',
-      m: 43,
-      year: '2024',
-      start: 'Feb 2024',
-      end: 'Dic 2024',
-      above: true,
-    },
-    {
-      name: 'Salem',
-      m: 54,
-      year: '2025',
-      start: 'Ene 2025',
-      end: null,
-      above: false,
-    },
-  ];
-
-  const track = document.getElementById('tl-track');
-  const strip = document.getElementById('tl-strip');
-
-  const infoEl = document.getElementById('tl-info');
-
+  const track   = document.getElementById('tl-track');
+  const strip   = document.getElementById('tl-strip');
+  const infoEl  = document.getElementById('tl-info');
   const btnPrev = document.getElementById('tl-prev');
   const btnNext = document.getElementById('tl-next');
 
-  let current = 4;
+  function getSlugFromURL() {
+    return new URLSearchParams(window.location.search).get('project');
+  }
+
+  function pushURL(slug) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('project', slug);
+    history.pushState({ project: slug }, '', url);
+    window.dispatchEvent(new CustomEvent('project-change', { detail: { slug } }));
+  }
+
+  function resolveInitial() {
+    const slug = getSlugFromURL();
+    if (!slug) return 0;
+    const idx = eras.findIndex(e => e.slug === slug);
+    return idx !== -1 ? idx : 0;
+  }
+
+  let current = resolveInitial();
 
   function buildYearMarker(m, label) {
     const x = TRACK_PADDING + m * PPM;
-
     const line = document.createElement('div');
-
     line.className = 'tl-year-vline';
     line.style.left = `${x}px`;
-
     const text = document.createElement('div');
-
     text.className = 'tl-year-label';
     text.style.left = `${x}px`;
-
     text.textContent = label;
-
     track.appendChild(line);
     track.appendChild(text);
   }
 
-  standaloneYears.forEach(({ y, m }) => {
-    buildYearMarker(m, y);
-  });
+  standaloneYears.forEach(({ y, m }) => buildYearMarker(m, y));
 
   eras.forEach((era, i) => {
     const x = TRACK_PADDING + era.m * PPM;
-
-    if (era.year) {
-      buildYearMarker(era.m, era.year);
-    }
+    if (era.year) buildYearMarker(era.m, era.year);
 
     const tick = document.createElement('div');
-
     tick.className = 'tl-tick';
     tick.id = `tl-tick-${i}`;
-
     tick.style.left = `${x}px`;
-
     track.appendChild(tick);
 
     const label = document.createElement('div');
-
     label.className = `tl-era-label ${era.above ? 'is-above' : 'is-below'}`;
-
     label.id = `tl-label-${i}`;
-
     label.style.left = `${x + 10}px`;
-
     label.textContent = era.name;
-
-    label.addEventListener('click', () => {
-      current = i;
-      render();
-    });
-
+    label.addEventListener('click', () => { current = i; render(true); });
     track.appendChild(label);
   });
 
-  function stripWidth() {
-    return strip.offsetWidth || 700;
-  }
+  function stripWidth() { return strip.offsetWidth || 700; }
 
   function trackOffset() {
-    return Math.round(stripWidth() / 2)
-      - (TRACK_PADDING + eras[current].m * PPM);
+    return Math.round(stripWidth() / 2) - (TRACK_PADDING + eras[current].m * PPM);
   }
 
-  function render() {
+  function render(updateURL = true) {
+    if (updateURL) pushURL(eras[current].slug);
+
     track.style.transform = `translate3d(${trackOffset()}px,0,0)`;
 
     eras.forEach((era, i) => {
       const active = i === current;
-
       const tick = document.getElementById(`tl-tick-${i}`);
-
+      const h = active ? 40 : 22;
       if (era.above) {
-        const h = active ? 40 : 22;
-
         tick.style.height = `${h}px`;
-
         tick.style.top = `${LINE_Y - h + 1}px`;
       } else {
-        const h = active ? 40 : 22;
-
         tick.style.height = `${h}px`;
-
         tick.style.top = `${LINE_Y}px`;
       }
-
       tick.classList.toggle('is-active', active);
-
-      const label = document.getElementById(`tl-label-${i}`);
-
-      label.classList.toggle('is-active', active);
+      document.getElementById(`tl-label-${i}`).classList.toggle('is-active', active);
     });
 
     btnPrev.disabled = current === 0;
     btnNext.disabled = current === eras.length - 1;
 
     const era = eras[current];
-
     const endHTML = era.end
       ? era.end
       : `<span class="tl-pulse"></span>En curso`;
 
     infoEl.innerHTML = `
-      <div class="tl-info-dates">
-        ${era.start} → ${endHTML}
-      </div>
+      <div class="tl-info-dates">${era.start} → ${endHTML}</div>
     `;
   }
 
   function navigate(dir) {
     const next = current + dir;
-
     if (next < 0 || next >= eras.length) return;
-
     current = next;
-
-    render();
+    render(true);
   }
 
   btnPrev.addEventListener('click', () => navigate(-1));
-
   btnNext.addEventListener('click', () => navigate(1));
 
   document.addEventListener('keydown', (e) => {
@@ -542,7 +280,13 @@
     if (e.key === 'ArrowRight') navigate(1);
   });
 
-  window.addEventListener('resize', render);
+  window.addEventListener('popstate', (e) => {
+    const slug = e.state?.project ?? getSlugFromURL();
+    const idx = eras.findIndex(era => era.slug === slug);
+    if (idx !== -1) { current = idx; render(false); }
+  });
 
-  render();
+  window.addEventListener('resize', () => render(false));
+
+  render(false);
 </script>

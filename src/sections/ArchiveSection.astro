@@ -62,9 +62,7 @@ const YOUTUBE_ICON_PATH = "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.
     if (!container) return;
 
     try {
-      const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(
-        RSS_FEED
-      )}`;
+      const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(RSS_FEED)}`;
 
       const res = await fetch(proxy, {
         cache: "no-store",
@@ -87,15 +85,11 @@ const YOUTUBE_ICON_PATH = "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.
       }
 
       const videos = entries.map((entry) => {
-        const videoId =
-          entry.querySelector("video\\:videoId")?.textContent ||
-          entry.querySelector("videoId")?.textContent;
+        const videoId = entry.querySelector("video\\:videoId")?.textContent || entry.querySelector("videoId")?.textContent;
 
-        const title =
-          entry.querySelector("title")?.textContent || "Video";
+        const title = entry.querySelector("title")?.textContent || "Video";
 
-        const link =
-          entry.querySelector("link")?.getAttribute("href");
+        const link = entry.querySelector("link")?.getAttribute("href");
 
         return {
           id: videoId,

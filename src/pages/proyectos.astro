@@ -1,11 +1,66 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import SoonSection from '@/sections/SoonSection.astro';
 import TimelineProjects from '@/components/TimelineProjects.astro';
 import ProjectsMainSection from '@/sections/ProjectsMainSection.astro';
+import ProjectInit from '@/sections/ProjectInit.astro';
 ---
 
+<style>
+	.bg-section {
+		background-color: #050c1a;
+		background-image: url('/topography.svg');
+	}
+</style>
+
 <Layout title="Proyectos">
-	<ProjectsMainSection />
-	<TimelineProjects />
+  <div id="hero" class="fixed inset-0 z-50 flex flex-col items-center justify-center  transition-transform duration-700 ease-in-out bg-section">
+    <ProjectInit />
+
+    <div class="absolute bottom-10 flex flex-col items-center opacity-50 animate-bounce">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" class="-mt-3 w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+      </svg>
+    </div>
+  </div>
+
+  <ProjectsMainSection />
+  <div class="pt-8 pb-4 container mx-auto px-4">
+    <TimelineProjects />
+  </div>
 </Layout>
+
+<script>
+  const hero = document.getElementById('hero');
+  let triggered = false;
+  document.body.style.overflow = 'hidden';
+
+  function dismissHero() {
+    if (triggered) return;
+    triggered = true;
+
+    document.body.style.overflow = '';
+
+    hero.style.transform = 'translateY(-100%)';
+    hero.addEventListener('transitionend', () => hero.remove(), { once: true });
+  }
+
+  window.addEventListener('wheel', (e) => {
+    if (e.deltaY > 0) dismissHero();
+  }, { passive: true });
+
+  let touchStartY = 0;
+  window.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  window.addEventListener('touchend', (e) => {
+    if (touchStartY - e.changedTouches[0].clientY > 40) dismissHero();
+  }, { passive: true });
+
+  if (new URLSearchParams(window.location.search).get('project')) {
+    document.body.style.overflow = '';
+    hero.remove();
+  }
+</script>
